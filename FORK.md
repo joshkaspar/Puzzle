@@ -9,13 +9,13 @@ what the fork adds.
 | Branch | What it is |
 |---|---|
 | `main` | An exact copy of the main project. Never commit to it directly. |
-| `train-tracks` | `main` plus the fork's own games: Train Tracks ([`tools/tracks/`](tools/tracks/README.md), `web/tracks/`) and Rack & Resonance ([`tools/rack/`](tools/rack/README.md), `web/rack/`). This is what gets built and deployed. |
+| `train-tracks` | **Retired 2026-11-22.** `main` plus the games as they were before they moved to [joshkaspar/kaspar-puzzles](https://github.com/joshkaspar/kaspar-puzzles). Kept so image tags built from it stay reproducible. Don't develop here. |
 
-Larger changes to a game start on a branch of their own (for example `tracks-tutorial`
-or `rack-and-resonance`), get tested, then fast-forward into `train-tracks`.
-
-The games are planned to move to their own repo, `kaspar-puzzles`
-(see [`tools/SPLIT-PLAN.md`](tools/SPLIT-PLAN.md)).
+The games, Train Tracks and Rack & Resonance, now live in
+[joshkaspar/kaspar-puzzles](https://github.com/joshkaspar/kaspar-puzzles), with their
+history. This fork is back to being a plain mirror: puzzle-docker builds the app from a
+commit of `main` and adds the games from kaspar-puzzles. See
+[puzzle-docker's README](https://github.com/joshkaspar/puzzle-docker#the-fork).
 
 Remotes: `origin` is this fork, `upstream` is the main project.
 
@@ -24,7 +24,6 @@ Remotes: `origin` is this fork, `upstream` is the main project.
 ```sh
 git fetch upstream
 git checkout main && git merge --ff-only upstream/main && git push origin main
-git checkout train-tracks && git merge main && git push origin train-tracks
 ```
 
 `main` has no commits of its own, so the first merge is always a fast-forward. Review
@@ -32,14 +31,9 @@ what came in before deploying.
 
 ## Building and deploying
 
-The app is never built on the dev machine, which has no Flutter. The game pages are:
-each game's `build.sh` needs only the plain Dart SDK (installed at
-`~/.local/share/dart-sdk`), and its output (`web/<game>/index.html`) is committed. The web
-build and the image come from [joshkaspar/puzzle-docker](https://github.com/joshkaspar/puzzle-docker):
-its `Dockerfile` pins a commit of `train-tracks` (`ARG PUZZLE_REF`), and GitHub Actions
-builds and publishes the image when that pin changes. See its README for the release
-steps. The server it runs on (Zuul) is documented in the private `zuul-unraid` repo
-under `apps/puzzle/`.
+See [puzzle-docker](https://github.com/joshkaspar/puzzle-docker): it builds the app from
+`PUZZLE_REF` (a commit of `main`) and the games from `GAMES_REF`. The server (Zuul) is
+documented in the private `zuul-unraid` repo under `apps/puzzle/`.
 
 Live at `https://puzzles.kaspar.casa`, with Train Tracks at `/tracks/` and Rack & Resonance
 at `/rack/`.
